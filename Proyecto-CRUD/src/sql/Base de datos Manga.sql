@@ -4,7 +4,7 @@ USE manga;
 
 -- Tabla autor
 CREATE TABLE autor (
-  id_autor INT PRIMARY KEY,
+  id INT PRIMARY KEY,
   nombre VARCHAR(50),
   pais VARCHAR(50),
   fecha_nacimiento DATE,
@@ -13,7 +13,7 @@ CREATE TABLE autor (
 
 -- Tabla editorial
 CREATE TABLE editorial (
-  id_editorial INT PRIMARY KEY,
+  id INT PRIMARY KEY,
   nombre VARCHAR(50),
   pais VARCHAR(50),
   fecha_fundacion DATE,
@@ -22,28 +22,28 @@ CREATE TABLE editorial (
 
 -- Tabla manga
 CREATE TABLE manga (
-  id_manga INT PRIMARY KEY,
+  id INT PRIMARY KEY,
   titulo VARCHAR(100),
   genero VARCHAR(50),
   sinopsis VARCHAR(500),
   fecha_publicacion DATE,
-  autor_id INT,
-  editorial_id INT,
-  FOREIGN KEY (autor_id) REFERENCES autor(id_autor),
-  FOREIGN KEY (editorial_id) REFERENCES editorial(id_editorial)
+  id_autor INT,
+  id_editorial INT,
+  FOREIGN KEY (id_autor) REFERENCES autor(id),
+  FOREIGN KEY (id_editorial) REFERENCES editorial(id)
 );
 
 -- Insertar datos en las tablas
-INSERT INTO autor (id_autor, nombre, pais, fecha_nacimiento, fecha_defuncion) VALUES
+INSERT INTO autor (id, nombre, pais, fecha_nacimiento, fecha_defuncion) VALUES
   (1, 'Akira Toriyama', 'Japón', '1955-04-05', NULL),
   (2, 'Eiichiro Oda', 'Japón', '1975-01-01', NULL),
   (3, 'Koyoharu Gotouge', 'Japón', '1989-05-05', NULL);
 
-INSERT INTO editorial (id_editorial, nombre, pais, fecha_fundacion, direccion) VALUES
+INSERT INTO editorial (id, nombre, pais, fecha_fundacion, direccion) VALUES
   (1, 'Shueisha', 'Japón', '1925-01-01', 'Tokio, Japón'),
   (2, 'Shonen Jump', 'Japón', '1968-07-02', 'Tokio, Japón');
 
-INSERT INTO manga (id_manga, titulo, genero, sinopsis, fecha_publicacion, autor_id, editorial_id) VALUES
+INSERT INTO manga (id, titulo, genero, sinopsis, fecha_publicacion, id_autor, id_editorial) VALUES
   (1, 'Dragon Ball', 'Acción, Aventura, Comedia', 'Un joven aventurero llamado Goku busca las siete esferas del dragón para poder pedir un deseo.', '1984-11-20', 1, 1),
   (2, 'One Piece', 'Acción, Aventura, Comedia', 'Un joven pirata llamado Monkey D. Luffy busca el tesoro más grande del mundo, conocido como "One Piece".', '1997-07-22', 2, 2),
   (3, 'Kimetsu no Yaiba', 'Acción, Aventura, Fantasía', 'Un joven llamado Tanjiro se convierte en un cazador de demonios para vengar a su familia y encontrar una cura para su hermana.', '2016-02-15', 3, 1),
