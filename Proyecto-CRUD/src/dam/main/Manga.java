@@ -1,18 +1,18 @@
 package dam.main;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class Manga {
 	private int id;
 	private String titulo;
 	private String genero;
 	private String sinopsis;
-	private Date fechaPublicacion;
+	private LocalDate fechaPublicacion;
 	private int idAutor;
 	private int idEditorial;
 	
 	public Manga(int id, String titulo, String genero, String sinopsis, 
-					Date fechaPublicacion, int idAutor, int idEditorial) {
+					LocalDate fechaPublicacion, int idAutor, int idEditorial) {
 		this.id = id;
 		this.titulo = titulo;
 		this.genero = genero;
@@ -54,11 +54,11 @@ public class Manga {
 		this.sinopsis = sinopsis;
 	}
 
-	public Date getFechaPublicacion() {
+	public LocalDate getFechaPublicacion() {
 		return fechaPublicacion;
 	}
 
-	public void setFechaPublicacion(Date fechaPublicacion) {
+	public void setFechaPublicacion(LocalDate fechaPublicacion) {
 		this.fechaPublicacion = fechaPublicacion;
 	}
 
