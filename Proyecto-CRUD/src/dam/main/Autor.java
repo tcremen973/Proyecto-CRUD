@@ -57,4 +57,10 @@ public class Autor {
 	public void setFechaDefuncion(LocalDate fechaDefuncion) {
 		this.fechaDefuncion = fechaDefuncion;
 	}
+
+	@Override
+	public String toString() {
+		return "Autor [id=" + id + ", nombre=" + nombre + ", pais=" + pais + ", fechaNacimiento=" + fechaNacimiento
+				+ ", fechaDefuncion=" + fechaDefuncion + "]";
+	}
 }

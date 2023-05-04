@@ -11,9 +11,8 @@ public class Manga {
 	private int idAutor;
 	private int idEditorial;
 	
-	public Manga(int id, String titulo, String genero, String sinopsis, Date fechaPublicacion, int idAutor,
-			int idEditorial) {
-		super();
+	public Manga(int id, String titulo, String genero, String sinopsis, 
+					Date fechaPublicacion, int idAutor, int idEditorial) {
 		this.id = id;
 		this.titulo = titulo;
 		this.genero = genero;
@@ -78,4 +77,13 @@ public class Manga {
 	public void setIdEditorial(int idEditorial) {
 		this.idEditorial = idEditorial;
 	}
+
+	@Override
+	public String toString() {
+		return "Manga [id=" + id + ", titulo=" + titulo + ", genero=" + genero + ", sinopsis=" + sinopsis
+				+ ", fechaPublicacion=" + fechaPublicacion + ", idAutor=" + idAutor + ", idEditorial=" + idEditorial
+				+ "]";
+	}
+	
+	
 }

@@ -57,4 +57,10 @@ public class Editorial {
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
 	}
+
+	@Override
+	public String toString() {
+		return "Editorial [id=" + id + ", nombre=" + nombre + ", pais=" + pais + ", fechaFundacion=" + fechaFundacion
+				+ ", direccion=" + direccion + "]";
+	}
 }
