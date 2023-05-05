@@ -44,10 +44,10 @@ public class DatabaseManager {
 	 * Metodos Manga
 	 */
 	private ArrayList<Manga> transformarManga(ResultSet rs){
-		ArrayList<Manga> manga = new ArrayList<Manga>();
+		ArrayList<Manga> mangas = new ArrayList<Manga>();
 		try {
 			while(rs.next()) {
-				manga.add(new Manga(
+				mangas.add(new Manga(
 						rs.getInt(1),
 						rs.getString(2),
 						rs.getString(3),
@@ -59,7 +59,7 @@ public class DatabaseManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return manga;
+		return mangas;
 	}
 	
 	/**
@@ -111,6 +111,12 @@ public class DatabaseManager {
 		return null;
 	}
 	
+	/**
+	 * Ordena la tabla manga por un campo.
+	 * @param campo
+	 * @param orden
+	 * @return
+	 */
 	public ArrayList<Manga> ordenarManga(String campo, String orden){
 		try {
 			PreparedStatement ps = this.connection.
@@ -123,6 +129,33 @@ public class DatabaseManager {
 		return null;
 	}
 	
+	/**
+	 * Edita un campo de una entrada.
+	 * @param campo
+	 * @param valor
+	 * @param campoBusqueda
+	 * @param condicion
+	 * @return
+	 */
+	public void updateManga(String campo, String valor, String campoBusqueda, String condicion){
+		try {
+			PreparedStatement ps = this.connection.
+					prepareStatement("UPDATE manga SET "+campo+" = '"+valor+"' WHERE "+campoBusqueda+" = "+condicion);
+			boolean rs = ps.execute();
+		} catch (SQLException e) {			
+			e.printStackTrace();
+		}
+	}
+	
+	public void deleteManga(String campo, String valor){
+		try {
+			PreparedStatement ps = this.connection.
+					prepareStatement("DELETE FROM manga WHERE "+campo+" = '"+valor+"'");
+			boolean rs = ps.execute();
+		} catch (SQLException e) {			
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Metodos Autor
