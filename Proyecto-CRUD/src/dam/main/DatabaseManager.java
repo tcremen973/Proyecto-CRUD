@@ -19,10 +19,10 @@ public class DatabaseManager {
 	//private ArrayList<Manga> mangaData;
 	
 	// Acceso a tablas
-	public static int MANGA = 1, AUTOR = 2, EDITORIAL = 3;
+	public static String MANGA = "manga", AUTOR = "autor", EDITORIAL = "editorial";
 	
-	// Atributos tabla Manga
-	//public static int ID_manga = 1; 
+	// Ordenar
+	public static String ASCENDENTE = "ASC", DESCENDENTE = "DESC";
 	
 	/**
 	 * Constructor especializado en inicializar objetos
@@ -43,90 +43,86 @@ public class DatabaseManager {
 	/**
 	 * Metodos Manga
 	 */
+	private ArrayList<Manga> transformarManga(ResultSet rs){
+		ArrayList<Manga> manga = new ArrayList<Manga>();
+		try {
+			while(rs.next()) {
+				manga.add(new Manga(
+						rs.getInt(1),
+						rs.getString(2),
+						rs.getString(3),
+						rs.getString(4),
+						rs.getDate(5).toLocalDate(),
+						rs.getInt(6),
+						rs.getInt(7)));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return manga;
+	}
+	
+	/**
+	 * Devuelve la tabla completa.
+	 * @return
+	 */
 	public ArrayList<Manga> getManga(){
-		ArrayList<Manga> manga = null;
 		try {
-			PreparedStatement ps = this.connection.
-					prepareStatement("SELECT * FROM manga");
+			PreparedStatement ps = this.connection.prepareStatement("SELECT * FROM manga");
 			ResultSet rs = ps.executeQuery();
-			manga = new ArrayList<Manga>();
-			while(rs.next()) {
-				manga.add(new Manga(
-						rs.getInt(1),
-						rs.getString(2),
-						rs.getString(3),
-						rs.getString(4),
-						rs.getDate(5).toLocalDate(),
-						rs.getInt(6),
-						rs.getInt(7)));
-			}
-		} catch (SQLException e) {			
+			return transformarManga(rs);
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return manga;
+		return null;
 	}
 	
 	/**
-	 * Metodo para buscar manga por id
-	 * @param id 
+	 * Metodo para buscar manga por un campo.
 	 * @return
 	 */
-	public ArrayList<Manga> getManga(int id){
-		ArrayList<Manga> manga = null;
+	public ArrayList<Manga> getManga(String campo, String condicion){
 		try {
 			PreparedStatement ps = this.connection.
-					prepareStatement("SELECT * FROM manga WHERE id = ?");
-			ps.setInt(1, id);
+					prepareStatement("SELECT * FROM manga WHERE "+ campo +" = "+ condicion);
 			ResultSet rs = ps.executeQuery();
-			manga = new ArrayList<Manga>();
-			while(rs.next()) {
-				manga.add(new Manga(
-						rs.getInt(1),
-						rs.getString(2),
-						rs.getString(3),
-						rs.getString(4),
-						rs.getDate(5).toLocalDate(),
-						rs.getInt(6),
-						rs.getInt(7)));
-			}
+			return transformarManga(rs);
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
-		return manga;
+		return null;
 	}
 	
 	/**
-	 * Método para buscar manga por id de autor y editorial.
+	 * Método para buscar manga por dos campos.
 	 * Es una búsqueda de AND.
-	 * @param id_autor
-	 * @param id_editorial
 	 * @return
 	 */
-	public ArrayList<Manga> getManga(int id_autor, int id_editorial){
-		ArrayList<Manga> manga = null;
+	public ArrayList<Manga> getManga(String campo1, String condicion1, String campo2, String condicion2){
 		try {
 			PreparedStatement ps = this.connection.
 					prepareStatement("SELECT * FROM manga "
-							+ "WHERE id_autor = ? AND id_editorial = ?");
-			ps.setInt(1, id_autor);
-			ps.setInt(2, id_editorial);
+							+ "WHERE "+campo1+" = "+condicion1+" AND "+campo2+" = "+condicion2);
 			ResultSet rs = ps.executeQuery();
-			manga = new ArrayList<Manga>();
-			while(rs.next()) {
-				manga.add(new Manga(
-						rs.getInt(1),
-						rs.getString(2),
-						rs.getString(3),
-						rs.getString(4),
-						rs.getDate(5).toLocalDate(),
-						rs.getInt(6),
-						rs.getInt(7)));
-			}
+			return transformarManga(rs);
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
-		return manga;
+		return null;
 	}
+	
+	public ArrayList<Manga> ordenarManga(String campo, String orden){
+		try {
+			PreparedStatement ps = this.connection.
+					prepareStatement("SELECT * FROM manga ORDER BY "+campo+" "+orden);
+			ResultSet rs = ps.executeQuery();
+			return transformarManga(rs);
+		} catch (SQLException e) {			
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Metodos Autor
