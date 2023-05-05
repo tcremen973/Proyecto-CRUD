@@ -11,6 +11,11 @@ public class Manga {
 	private int idAutor;
 	private int idEditorial;
 	
+	// Atributos Manga
+	public static String ID = "id", TITULO = "titulo", GENERO = "genero", 
+			SINOPSIS = "sinopsis", FECHA_PUBLICACION = "fecha_publicacion",
+			ID_AUTOR = "id_autor", ID_EDITORIAL = "id_editorial";
+	
 	public Manga(int id, String titulo, String genero, String sinopsis, 
 					LocalDate fechaPublicacion, int idAutor, int idEditorial) {
 		this.id = id;
