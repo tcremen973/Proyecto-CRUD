@@ -15,193 +15,151 @@ import org.eclipse.jdt.annotation.NonNull;
 public class DatabaseManager {
 	private Connection connection = null;
 	private Statement statement = null;
-	//private boolean mangaUpdated = false;
-	//private ArrayList<Manga> mangaData;
-	
+
 	// Acceso a tablas
 	public static String MANGA = "manga", AUTOR = "autor", EDITORIAL = "editorial";
-	
+
 	// Ordenar
 	public static String ASCENDENTE = "ASC", DESCENDENTE = "DESC";
-	
+
 	/**
-	 * Constructor especializado en inicializar objetos
-	 * de tipo DatabaseManager a partir de un objeto de conexión
-	 * que no puede ser nulo
-	 * @param connection Objeto de conexión
+	 * Constructor que inicializa la conexion a la BBDD
+	 * @param connection
 	 */
 	public DatabaseManager(@NonNull Connection connection) {
 		this.connection = connection;
 		try {
 			this.statement = connection.createStatement();
-			//this.mangaData = new ArrayList<Manga>();
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
 	}
-	
 	/**
-	 * Metodos Manga
+	 * Metodo para ejecutar la linea de SQL recibida.
+	 * @param nTabla
+	 * @return
 	 */
-	private ArrayList<Manga> transformarManga(ResultSet rs){
-		ArrayList<Manga> mangas = new ArrayList<Manga>();
+	private ArrayList<Elemento> getData(PreparedStatement ps, String nTabla){
+		ArrayList<Elemento> tabla = new ArrayList<Elemento>();
 		try {
-			while(rs.next()) {
-				mangas.add(new Manga(
-						rs.getInt(1),
-						rs.getString(2),
-						rs.getString(3),
-						rs.getString(4),
-						rs.getDate(5).toLocalDate(),
-						rs.getInt(6),
-						rs.getInt(7)));
+			ResultSet rs = ps.executeQuery();
+			// Guardo los datos de la consulta con el tipo que corresponde
+			switch (nTabla) {
+			case "manga": tabla.addAll(Manga.getData(rs)); break;
+			case "autor": tabla.addAll(Autor.getData(rs)); break;
+			case "editorial": tabla.addAll(Editorial.getData(rs)); break;
 			}
+			tabla.addAll(Manga.getData(rs));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return mangas;
+		return tabla;
 	}
-	
+
 	/**
-	 * Devuelve la tabla completa.
+	 * Método para devolver una tabla completa sin condiciones
+	 * @param nTabla
 	 * @return
 	 */
-	public ArrayList<Manga> getManga(){
+	public ArrayList<Elemento> getTabla(String nTabla){
+		PreparedStatement ps = null;
 		try {
-			PreparedStatement ps = this.connection.prepareStatement("SELECT * FROM manga");
-			ResultSet rs = ps.executeQuery();
-			return transformarManga(rs);
+			ps = this.connection.prepareStatement("SELECT * FROM "+nTabla);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		return null;
+		}	
+		return getData(ps, nTabla);
 	}
-	
+
 	/**
-	 * Metodo para buscar manga por un campo.
+	 * Método para devolver una tabla por una condición
+	 * @param nTabla
+	 * @param campo
+	 * @param condicion
 	 * @return
 	 */
-	public ArrayList<Manga> getManga(String campo, String condicion){
+	public ArrayList<Elemento> getTabla(String nTabla, String campo, String condicion){
+		PreparedStatement ps = null;
 		try {
-			PreparedStatement ps = this.connection.
+			ps = this.connection.
 					prepareStatement("SELECT * FROM manga WHERE "+ campo +" = "+ condicion);
-			ResultSet rs = ps.executeQuery();
-			return transformarManga(rs);
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
-		return null;
+		return getData(ps, nTabla);
 	}
-	
+
 	/**
-	 * Método para buscar manga por dos campos.
-	 * Es una búsqueda de AND.
+	 * Método para devolver una tabla por dos condiciones
+	 * @param nTabla
+	 * @param campo1
+	 * @param condicion1
+	 * @param campo2
+	 * @param condicion2
 	 * @return
 	 */
-	public ArrayList<Manga> getManga(String campo1, String condicion1, String campo2, String condicion2){
+	public ArrayList<Elemento> getTabla(String nTabla, String campo1, String condicion1, String campo2, String condicion2){
+		PreparedStatement ps = null;
 		try {
-			PreparedStatement ps = this.connection.
+			ps = this.connection.
 					prepareStatement("SELECT * FROM manga "
 							+ "WHERE "+campo1+" = "+condicion1+" AND "+campo2+" = "+condicion2);
-			ResultSet rs = ps.executeQuery();
-			return transformarManga(rs);
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
-		return null;
+		return getData(ps, nTabla);
 	}
-	
-	/**
-	 * Ordena la tabla manga por un campo.
-	 * @param campo
-	 * @param orden
-	 * @return
-	 */
-	public ArrayList<Manga> ordenarManga(String campo, String orden){
+
+	public ArrayList<Elemento> ordenarTabla(String nTabla, String campo, String orden){
+		PreparedStatement ps = null;
 		try {
-			PreparedStatement ps = this.connection.
+			ps = this.connection.
 					prepareStatement("SELECT * FROM manga ORDER BY "+campo+" "+orden);
-			ResultSet rs = ps.executeQuery();
-			return transformarManga(rs);
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
-		return null;
+		return getData(ps, nTabla);
 	}
 	
+	// TODO TERMINAR ADDENTRADA!
+	public void addEntrada(String nTabla, Elemento elemento) {
+		PreparedStatement ps = null;
+		try {
+			ps = this.connection.prepareStatement("INSERT INTO "+nTabla+" "
+					+ "VALUES ();");
+			ps.execute();
+		} catch (SQLException e) {			
+			e.printStackTrace();
+		}
+	}
+
 	/**
-	 * Edita un campo de una entrada.
+	 * Edita un campo de una tabla.
 	 * @param campo
 	 * @param valor
 	 * @param campoBusqueda
 	 * @param condicion
 	 * @return
 	 */
-	public void updateManga(String campo, String valor, String campoBusqueda, String condicion){
+	public void updateEntradas(String nTabla, String campo, String valor, String campoBusqueda, String condicion){
+		PreparedStatement ps = null;
 		try {
-			PreparedStatement ps = this.connection.
-					prepareStatement("UPDATE manga SET "+campo+" = '"+valor+"' WHERE "+campoBusqueda+" = "+condicion);
+			ps = this.connection.
+					prepareStatement("UPDATE "+nTabla+" SET "+campo+" = '"+valor+"' WHERE "+campoBusqueda+" = "+condicion);
 			boolean rs = ps.execute();
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
 	}
-	
-	public void deleteManga(String campo, String valor){
+
+	public void deleteEntradas(String nTabla, String campo, String condicion){
+		PreparedStatement ps = null;
 		try {
-			PreparedStatement ps = this.connection.
-					prepareStatement("DELETE FROM manga WHERE "+campo+" = '"+valor+"'");
+			ps = this.connection.
+					prepareStatement("DELETE FROM "+nTabla+" WHERE "+campo+" = '"+condicion+"'");
 			boolean rs = ps.execute();
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Metodos Autor
-	 */
-	public ArrayList<Autor> getAutor(){
-		ArrayList<Autor> autor = null;
-		try {
-			PreparedStatement ps = this.connection.
-					prepareStatement("SELECT * FROM autor");
-			ResultSet rs = ps.executeQuery();
-			autor = new ArrayList<Autor>();
-			while(rs.next()) {
-				autor.add(new Autor(
-						rs.getInt(1),
-						rs.getString(2),
-						rs.getString(3),
-						rs.getDate(4).toLocalDate(),
-						rs.getDate(5) == null? null:rs.getDate(5).toLocalDate()));
-			}
-		} catch (SQLException e) {			
-			e.printStackTrace();
-		}
-		return autor;
-	}
-	
-	/**
-	 * Metodos Editorial
-	 */
-	public ArrayList<Editorial> getEditorial(){
-		ArrayList<Editorial> editorial = null;
-		try {
-			PreparedStatement ps = this.connection.
-					prepareStatement("SELECT * FROM editorial");
-			ResultSet rs = ps.executeQuery();
-			editorial = new ArrayList<Editorial>();
-			while(rs.next()) {
-				editorial.add(new Editorial(
-						rs.getInt(1),
-						rs.getString(2),
-						rs.getString(3),
-						rs.getDate(4).toLocalDate(),
-						rs.getString(5)));
-			}
-		} catch (SQLException e) {			
-			e.printStackTrace();
-		}
-		return editorial;
 	}
 }
