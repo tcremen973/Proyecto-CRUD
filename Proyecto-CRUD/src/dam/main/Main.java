@@ -1,6 +1,5 @@
 package dam.main;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Main {
@@ -19,25 +18,11 @@ public class Main {
 		// Creo un DatabaseManager
 		DatabaseManager databaseManager = new DatabaseManager(conexion.getConnection());
 		
-		// Compruebo todas las tablas para comprobar el correcto funcionamiento del programa
-		System.out.println("\nTabla Manga");
-		ArrayList<Manga> tablaManga = databaseManager.getManga();
-		for (Manga manga : tablaManga) {
-			System.out.println(manga);
+		// Compruebo el funcionamiento
+		System.out.println("\nTabla Tabla");
+		ArrayList<Elemento> tabla = databaseManager.getTabla(DatabaseManager.MANGA, Manga.ID_AUTOR, "1");
+		for (Elemento elemento : tabla) {
+			System.out.println(elemento);
 		}
-		
-		System.out.println("\nTabla Autor");
-		ArrayList<Autor> tablaAutor = databaseManager.getAutor();
-		for (Autor autor : tablaAutor) {
-			System.out.println(autor);
-		}
-		
-		System.out.println("\nTabla Editorial");
-		ArrayList<Editorial> tablaEditorial = databaseManager.getEditorial();
-		for (Editorial editorial : tablaEditorial) {
-			System.out.println(editorial);
-		}
-		
-		LocalDate fecha = null;
 	}
 }

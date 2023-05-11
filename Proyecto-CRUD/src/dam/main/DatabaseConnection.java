@@ -8,16 +8,13 @@ import org.eclipse.jdt.annotation.NonNull;
 
 public class DatabaseConnection {
 	private Connection connection;
-	//"jdbc:mysql://localhost/crud?user=root&password="
+	// CONEXION = "jdbc:mysql://localhost/crud?manga=root&password="
 	
 	public boolean connect(@NonNull String connectionString) {		
 		try {
 			// Cargar el driver
 			DriverManager.registerDriver (new com.mysql.cj.jdbc.Driver());
-			
-			// Otra manera de cargar el controlador
-			// Class.forName("com.mysql.cj.jdbc.Driver");			
-			
+
 			// Crear un objeto de conexión
 			this.connection = DriverManager.getConnection(connectionString);
 			
