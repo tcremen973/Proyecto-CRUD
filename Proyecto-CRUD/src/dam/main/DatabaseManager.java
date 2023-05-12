@@ -1,11 +1,14 @@
 package dam.main;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.jdt.annotation.NonNull;
 /**
  * Gestor de la base de datos
@@ -120,16 +123,55 @@ public class DatabaseManager {
 		}
 		return getData(ps, nTabla);
 	}
-	
-	// TODO TERMINAR ADDENTRADA!
-	public void addEntrada(String nTabla, Elemento elemento) {
+
+	public void addEntradas(ArrayList<Elemento> elementos) {
 		PreparedStatement ps = null;
-		try {
-			ps = this.connection.prepareStatement("INSERT INTO "+nTabla+" "
-					+ "VALUES ();");
-			ps.execute();
-		} catch (SQLException e) {			
-			e.printStackTrace();
+		for (Elemento elemento : elementos) {
+			if (elemento instanceof Manga) {
+				try {
+					ps = this.connection.prepareStatement("INSERT INTO manga VALUES"
+							+ "(?,?, ?, ?, ?, ?, ?)");
+					Manga manga = ((Manga)elemento);
+					ps.setInt(1, manga.getId());
+					ps.setString(2, manga.getTitulo());
+					ps.setString(3, manga.getGenero());
+					ps.setString(4, manga.getSinopsis());
+					ps.setDate(5, Date.valueOf(manga.getFechaPublicacion()));
+					ps.setInt(6, manga.getIdAutor());
+					ps.setInt(7, manga.getIdEditorial());
+					ps.execute();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			} else if (elemento instanceof Autor) {
+				try {
+					ps = this.connection.prepareStatement("INSERT INTO autor VALUES"
+							+ "(?, ?, ?, ?, ?)");
+					Autor autor = ((Autor)elemento);
+					ps.setInt(1, autor.getId());
+					ps.setString(2, autor.getNombre());
+					ps.setString(3, autor.getPais());
+					ps.setDate(4, Date.valueOf(autor.getFechaNacimiento()));
+					ps.setDate(5, Date.valueOf(autor.getFechaDefuncion()));
+					ps.execute();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			} else if (elemento instanceof Editorial) {
+				try {
+					ps = this.connection.prepareStatement("INSERT INTO editorial VALUES"
+							+ "(?, ?, ?, ?, ?)");
+					Editorial editorial = ((Editorial)elemento);
+					ps.setInt(1, editorial.getId());
+					ps.setString(2, editorial.getNombre());
+					ps.setString(3, editorial.getPais());
+					ps.setDate(4, Date.valueOf(editorial.getFechaFundacion()));
+					ps.setString(5, editorial.getDireccion());
+					ps.execute();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -152,6 +194,13 @@ public class DatabaseManager {
 		}
 	}
 
+	/**
+	 * Elimina entradas de una tabla por
+	 * una condición indicada.
+	 * @param nTabla
+	 * @param campo
+	 * @param condicion
+	 */
 	public void deleteEntradas(String nTabla, String campo, String condicion){
 		PreparedStatement ps = null;
 		try {
@@ -161,5 +210,9 @@ public class DatabaseManager {
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
+	}
+	
+	public void exportarTabla( ) {
+		
 	}
 }
