@@ -1,10 +1,9 @@
-DROP DATABASE IF EXIST manga;
 CREATE DATABASE manga;
 USE manga;
 
 -- Tabla autor
 CREATE TABLE autor (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   nombre VARCHAR(50),
   pais VARCHAR(50),
   fecha_nacimiento DATE,
@@ -13,7 +12,7 @@ CREATE TABLE autor (
 
 -- Tabla editorial
 CREATE TABLE editorial (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   nombre VARCHAR(50),
   pais VARCHAR(50),
   fecha_fundacion DATE,
@@ -22,7 +21,7 @@ CREATE TABLE editorial (
 
 -- Tabla manga
 CREATE TABLE manga (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   titulo VARCHAR(100),
   genero VARCHAR(50),
   sinopsis VARCHAR(500),
