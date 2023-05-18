@@ -12,6 +12,10 @@ public class Editorial implements Elemento {
 	private LocalDate fechaFundacion;
 	private String direccion;
 	
+	// Atributos Editorial
+		public static String ID = "id", NOMBRE = "nombre", PAIS = "pais",
+				FECHA_PUBLICACION = "fecha_publicacion",DIRECCION = "direccion";
+	
 	public Editorial(int id, String nombre, String pais, LocalDate fechaFundacion, String direccion) {
 		super();
 		this.id = id;

@@ -12,6 +12,10 @@ public class Autor implements Elemento {
 	private LocalDate fechaNacimiento;
 	private LocalDate fechaDefuncion;
 
+	// Atributos Autor
+		public static String ID = "id", NOMBRE = "nombre", PAIS = "pais",
+				FECHA_NACIMIENTO = "fecha_nacimiento", FECHA_DEFUNCION = "fecha_defuncion";
+	
 	public Autor(int id, String nombre, String pais, LocalDate fechaNacimiento, LocalDate fechaDefuncion) {
 		super();
 		this.id = id;
