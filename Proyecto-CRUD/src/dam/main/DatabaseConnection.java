@@ -8,22 +8,40 @@ import org.eclipse.jdt.annotation.NonNull;
 
 public class DatabaseConnection {
 	private Connection connection;
-	// CONEXION = "jdbc:mysql://localhost/crud?manga=root&password="
+	private String connectionString;
+	// CONEXION = "jdbc:mysql://localhost/crud?user=root&password="
 	
-	public boolean connect(@NonNull String connectionString) {		
+	public DatabaseConnection (@NonNull String stringConnection) {
 		try {
-			// Cargar el driver
+			// Se carga el driver al crear el objeto
 			DriverManager.registerDriver (new com.mysql.cj.jdbc.Driver());
-
-			// Crear un objeto de conexión
-			this.connection = DriverManager.getConnection(connectionString);
-			
-		} catch (SQLException e) {			
+			this.connectionString = stringConnection;
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return connection==null?false:true;
 	}
 	
+	public boolean connect() {
+		try {
+			this.connection = DriverManager.getConnection(connectionString);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return isConnected();
+	}
+	
+	public String getConnectionString() {
+		return connectionString;
+	}
+
+	public void setConnectionString(String connectionString) {
+		this.connectionString = connectionString;
+	}
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+
 	public boolean disconnect() {
 		try {
 			this.connection.close();
