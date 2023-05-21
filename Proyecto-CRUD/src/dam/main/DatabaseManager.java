@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -23,6 +24,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.jdt.annotation.NonNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 /**
  * Gestor de la base de datos
  * @author Toni
@@ -266,11 +270,12 @@ public class DatabaseManager {
 			// Añado una raiz al documento
 			Element raiz = documento.createElement("elementos");
 			documento.appendChild(raiz);
-			
+			Element elem = null;
+
 			for (Elemento elemento : elementos) {
-				Element elem = documento.createElement("elemento");
 				if (elemento instanceof Manga) {
 					Manga e = ((Manga)elemento);
+					elem = documento.createElement("manga");
 					elem.setAttribute(Manga.ID, String.valueOf(e.getId()));
 					elem.setAttribute(Manga.TITULO, e.getTitulo());
 					elem.setAttribute(Manga.GENERO, e.getGenero());
@@ -280,17 +285,23 @@ public class DatabaseManager {
 					elem.setAttribute(Manga.ID_EDITORIAL, String.valueOf(e.getIdEditorial()));
 				} else if (elemento instanceof Autor) {
 					Autor e = ((Autor)elemento);
+					elem = documento.createElement("autor");
 					elem.setAttribute(Autor.ID, String.valueOf(e.getId()));
 					elem.setAttribute(Autor.NOMBRE, e.getNombre());
 					elem.setAttribute(Autor.PAIS, e.getPais());
 					elem.setAttribute(Autor.FECHA_NACIMIENTO, e.getFechaNacimiento().toString());
-					elem.setAttribute(Autor.FECHA_DEFUNCION, e.getFechaDefuncion().toString());
+					if (e.getFechaDefuncion() == null) {
+					    elem.setAttribute(Autor.FECHA_DEFUNCION, null);
+					} else {
+					    elem.setAttribute(Autor.FECHA_DEFUNCION, e.getFechaDefuncion().toString());
+					}
 				} else if (elemento instanceof Editorial) {
 					Editorial e = ((Editorial)elemento);
+					elem = documento.createElement("editorial");
 					elem.setAttribute(Editorial.ID, String.valueOf(e.getId()));
 					elem.setAttribute(Editorial.NOMBRE, e.getNombre());
 					elem.setAttribute(Editorial.PAIS, e.getPais());
-					elem.setAttribute(Editorial.FECHA_PUBLICACION, e.getFechaFundacion().toString());
+					elem.setAttribute(Editorial.FECHA_FUNDACION, e.getFechaFundacion().toString());
 					elem.setAttribute(Editorial.DIRECCION, e.getDireccion());
 				}
 				raiz.appendChild(elem);
@@ -307,5 +318,59 @@ public class DatabaseManager {
 		}
 		return documento;
 	}
-	
+
+	public ArrayList<Elemento> importarXml(String rutaArchivo) {
+		ArrayList<Elemento> tabla = new ArrayList<Elemento>();
+	    try {
+	        // Creo el documento
+	        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder db = dbf.newDocumentBuilder();
+	        Document documento = db.parse(new File(rutaArchivo));
+
+	        // Guardo todas las etiquetas con el nombre elemento
+	        NodeList nodeList = documento.getElementsByTagName("manga");
+	        for (int i = 0; i < nodeList.getLength(); i++) {
+	        	NamedNodeMap item = nodeList.item(i).getAttributes();
+				tabla.add(new Manga(
+						Integer.valueOf(item.getNamedItem(Manga.ID).getNodeValue()),
+						item.getNamedItem(Manga.TITULO).getNodeValue(),
+						item.getNamedItem(Manga.GENERO).getNodeValue(),
+						item.getNamedItem(Manga.SINOPSIS).getNodeValue(),
+						LocalDate.parse(item.getNamedItem(Manga.FECHA_PUBLICACION).getNodeValue()),
+						Integer.valueOf(item.getNamedItem(Manga.ID_AUTOR).getNodeValue()),
+						Integer.valueOf(item.getNamedItem(Manga.ID_AUTOR).getNodeValue())
+						));
+			}
+	        nodeList = documento.getElementsByTagName("autor");
+	        for (int i = 0; i < nodeList.getLength(); i++) {
+	        	NamedNodeMap item = nodeList.item(i).getAttributes();
+	        	String fechaDefuncion = item.getNamedItem(Autor.FECHA_DEFUNCION).getNodeValue();
+
+				tabla.add(new Autor(
+						Integer.valueOf(item.getNamedItem(Autor.ID).getNodeValue()),
+						item.getNamedItem(Autor.NOMBRE).getNodeValue(),
+						item.getNamedItem(Autor.PAIS).getNodeValue(),
+						LocalDate.parse(item.getNamedItem(Autor.FECHA_NACIMIENTO).getNodeValue()),
+						fechaDefuncion.equals("")? null: LocalDate.parse(fechaDefuncion)
+						));
+			}
+	        nodeList = documento.getElementsByTagName("editorial");
+	        for (int i = 0; i < nodeList.getLength(); i++) {
+	        	NamedNodeMap item = nodeList.item(i).getAttributes();
+				tabla.add(new Editorial(
+						Integer.valueOf(item.getNamedItem(Editorial.ID).getNodeValue()),
+						item.getNamedItem(Editorial.NOMBRE).getNodeValue(),
+						item.getNamedItem(Editorial.PAIS).getNodeValue(),
+						LocalDate.parse(item.getNamedItem(Editorial.FECHA_FUNDACION).getNodeValue()),
+						item.getNamedItem(Editorial.DIRECCION).getNodeValue()
+						));
+			}
+	        
+	        
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+		return tabla;
+	}
 }
