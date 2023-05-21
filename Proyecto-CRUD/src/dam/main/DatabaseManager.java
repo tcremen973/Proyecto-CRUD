@@ -7,16 +7,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -25,8 +21,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 /**
  * Gestor de la base de datos
  * @author Toni
@@ -34,8 +30,6 @@ import org.w3c.dom.NodeList;
  */
 public class DatabaseManager {
 	private DatabaseConnection connection;
-	private Statement statement;
-
 	// Acceso a tablas
 	public static String MANGA = "manga", AUTOR = "autor", EDITORIAL = "editorial";
 
@@ -228,7 +222,7 @@ public class DatabaseManager {
 		try {
 			connection = DriverManager.getConnection(this.connection.getConnectionString());
 			ps = connection.prepareStatement("UPDATE "+nTabla+" SET "+campo+" = '"+valor+"' WHERE "+campoBusqueda+" = "+condicion);
-			boolean rs = ps.execute();
+			ps.execute();
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		} finally {
@@ -250,7 +244,7 @@ public class DatabaseManager {
 		try {
 			connection = DriverManager.getConnection(this.connection.getConnectionString());
 			ps = connection.prepareStatement("DELETE FROM "+nTabla+" WHERE "+campo+" = '"+condicion+"'");
-			boolean rs = ps.execute();
+			ps.execute();
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		} finally {
@@ -290,11 +284,8 @@ public class DatabaseManager {
 					elem.setAttribute(Autor.NOMBRE, e.getNombre());
 					elem.setAttribute(Autor.PAIS, e.getPais());
 					elem.setAttribute(Autor.FECHA_NACIMIENTO, e.getFechaNacimiento().toString());
-					if (e.getFechaDefuncion() == null) {
-					    elem.setAttribute(Autor.FECHA_DEFUNCION, null);
-					} else {
-					    elem.setAttribute(Autor.FECHA_DEFUNCION, e.getFechaDefuncion().toString());
-					}
+					if (e.getFechaDefuncion() == null) {elem.setAttribute(Autor.FECHA_DEFUNCION, null);} 
+					else {elem.setAttribute(Autor.FECHA_DEFUNCION, e.getFechaDefuncion().toString());}
 				} else if (elemento instanceof Editorial) {
 					Editorial e = ((Editorial)elemento);
 					elem = documento.createElement("editorial");
@@ -321,16 +312,16 @@ public class DatabaseManager {
 
 	public ArrayList<Elemento> importarXml(String rutaArchivo) {
 		ArrayList<Elemento> tabla = new ArrayList<Elemento>();
-	    try {
-	        // Creo el documento
-	        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-	        DocumentBuilder db = dbf.newDocumentBuilder();
-	        Document documento = db.parse(new File(rutaArchivo));
+		try {
+			// Creo el documento
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document documento = db.parse(new File(rutaArchivo));
 
-	        // Guardo todas las etiquetas con el nombre elemento
-	        NodeList nodeList = documento.getElementsByTagName("manga");
-	        for (int i = 0; i < nodeList.getLength(); i++) {
-	        	NamedNodeMap item = nodeList.item(i).getAttributes();
+			// Guardo todas las etiquetas con el nombre elemento
+			NodeList nodeList = documento.getElementsByTagName("manga");
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				NamedNodeMap item = nodeList.item(i).getAttributes();
 				tabla.add(new Manga(
 						Integer.valueOf(item.getNamedItem(Manga.ID).getNodeValue()),
 						item.getNamedItem(Manga.TITULO).getNodeValue(),
@@ -341,11 +332,10 @@ public class DatabaseManager {
 						Integer.valueOf(item.getNamedItem(Manga.ID_AUTOR).getNodeValue())
 						));
 			}
-	        nodeList = documento.getElementsByTagName("autor");
-	        for (int i = 0; i < nodeList.getLength(); i++) {
-	        	NamedNodeMap item = nodeList.item(i).getAttributes();
-	        	String fechaDefuncion = item.getNamedItem(Autor.FECHA_DEFUNCION).getNodeValue();
-
+			nodeList = documento.getElementsByTagName("autor");
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				NamedNodeMap item = nodeList.item(i).getAttributes();
+				String fechaDefuncion = item.getNamedItem(Autor.FECHA_DEFUNCION).getNodeValue();
 				tabla.add(new Autor(
 						Integer.valueOf(item.getNamedItem(Autor.ID).getNodeValue()),
 						item.getNamedItem(Autor.NOMBRE).getNodeValue(),
@@ -354,9 +344,9 @@ public class DatabaseManager {
 						fechaDefuncion.equals("")? null: LocalDate.parse(fechaDefuncion)
 						));
 			}
-	        nodeList = documento.getElementsByTagName("editorial");
-	        for (int i = 0; i < nodeList.getLength(); i++) {
-	        	NamedNodeMap item = nodeList.item(i).getAttributes();
+			nodeList = documento.getElementsByTagName("editorial");
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				NamedNodeMap item = nodeList.item(i).getAttributes();
 				tabla.add(new Editorial(
 						Integer.valueOf(item.getNamedItem(Editorial.ID).getNodeValue()),
 						item.getNamedItem(Editorial.NOMBRE).getNodeValue(),
@@ -365,12 +355,9 @@ public class DatabaseManager {
 						item.getNamedItem(Editorial.DIRECCION).getNodeValue()
 						));
 			}
-	        
-	        
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return tabla;
 	}
 }
