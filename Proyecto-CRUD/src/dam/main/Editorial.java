@@ -14,7 +14,7 @@ public class Editorial implements Elemento {
 	
 	// Atributos Editorial
 		public static String ID = "id", NOMBRE = "nombre", PAIS = "pais",
-				FECHA_PUBLICACION = "fecha_publicacion",DIRECCION = "direccion";
+				FECHA_FUNDACION = "fecha_fundacion",DIRECCION = "direccion";
 	
 	public Editorial(int id, String nombre, String pais, LocalDate fechaFundacion, String direccion) {
 		super();
