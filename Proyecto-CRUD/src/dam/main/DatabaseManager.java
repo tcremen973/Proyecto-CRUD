@@ -255,13 +255,18 @@ public class DatabaseManager {
 		}
 	}
 
-	public void exportarTabla(ArrayList<Elemento> elementos) {
+	public Document exportarTabla(ArrayList<Elemento> elementos, String rutaArchivo) {
+		Document documento = null;
 		try {
+			// Creo el documento
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document documento=db.parse("TablaExportada.xml");
+			documento=db.newDocument();
 
-			Element raiz = documento.getDocumentElement();
+			// Añado una raiz al documento
+			Element raiz = documento.createElement("elementos");
+			documento.appendChild(raiz);
+			
 			for (Elemento elemento : elementos) {
 				Element elem = documento.createElement("elemento");
 				if (elemento instanceof Manga) {
@@ -289,10 +294,18 @@ public class DatabaseManager {
 					elem.setAttribute(Editorial.DIRECCION, e.getDireccion());
 				}
 				raiz.appendChild(elem);
-
 			}
+			// Guardo el documento en un archivo
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(documento);
+			StreamResult result = new StreamResult(new File(rutaArchivo));
+			transformer.transform(source, result);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return documento;
 	}
+	
 }
