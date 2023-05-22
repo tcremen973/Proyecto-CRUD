@@ -51,7 +51,6 @@ public class DatabaseConnection {
 		try {
 			if(this.connection==null) return true;
 			this.connection.close();
-			this.connectionString = "";
 			return true;
 		} catch (SQLException e) {			
 			return false;
