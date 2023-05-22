@@ -379,8 +379,12 @@ public class DatabaseManager {
 		}
 		// Recogo las ids de todas las editoriales
 		for (Elemento editorial : getTabla(DatabaseManager.EDITORIAL,null,null,null)) {
-			idsDeAutor.add(((Editorial)editorial).getId());
+			idsDeEditorial.add(((Editorial)editorial).getId());
 		}
+		System.out.println(idsAutorEnManga);
+		System.out.println(idsDeAutor);
+		System.out.println(idsEditorialEnManga);
+		System.out.println(idsDeEditorial);
 		// Compruebo si todas las ids de autor en la tabla manga se 
 		// encuentran en la tabla autor, luego lo mismo con editoriales
 		return idsDeAutor.containsAll(idsAutorEnManga) && idsDeEditorial.containsAll(idsEditorialEnManga);
