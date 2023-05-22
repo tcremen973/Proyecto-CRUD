@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS manga;
 CREATE DATABASE manga;
 USE manga;
 
