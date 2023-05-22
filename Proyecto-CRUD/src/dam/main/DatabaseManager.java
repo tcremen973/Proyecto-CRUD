@@ -9,7 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,7 +27,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
 /**
- * Gestor de la base de datos
+ * Gestor de la base de datos de manga.
  * @author Toni
  * @version 1.0
  */
@@ -40,7 +42,7 @@ public class DatabaseManager {
 
 	/**
 	 * Constructor que inicializa la conexion a la BBDD
-	 * @param connection
+	 * @param connection Objeto tipo DatabaseConnection usado para establecer conexión.
 	 */
 	public DatabaseManager(@NonNull DatabaseConnection connection) {
 		this.connection = connection;
@@ -48,16 +50,15 @@ public class DatabaseManager {
 
 	/**
 	 * Metodo para ejecutar la linea de SQL recibida.
-	 * @param nTabla
+	 * @param nTabla Nombre de la tabla, usado para identificar el tipo de objetos.
 	 * @return
 	 */
 	private ArrayList<Elemento> getData(PreparedStatement ps, String nTabla){
 		ArrayList<Elemento> data = new ArrayList<Elemento>();
 		try {
 			ResultSet rs = ps.executeQuery();
-			// Guardo los datos de la consulta con el tipo que corresponde
+			// Creo los objetos de la consulta según su tipo
 			switch (nTabla) {
-
 			case "manga": // Caso para Manga
 				while(rs.next()) {
 					data.add(new Manga(
@@ -70,7 +71,6 @@ public class DatabaseManager {
 							rs.getInt(7)));
 				}; 
 				break;
-
 			case "autor": // Caso para Autor
 				while(rs.next()) {
 					data.add(new Autor(
@@ -97,26 +97,27 @@ public class DatabaseManager {
 		}
 		return data;
 	}
-
+	
 	/**
 	 * Método para devolver una tabla completa sin condiciones
 	 * @param nTabla
 	 * @return
 	 */
 	public ArrayList<Elemento> getTabla(String nTabla){
-		Connection connection;
 		PreparedStatement ps = null;
+		ArrayList<Elemento> tabla = null;
 		try {
 			// Abro la conexión
-			connection = DriverManager.getConnection(this.connection.getConnectionString());
-			ps = connection.prepareStatement("SELECT * FROM "+nTabla);
+			connection.connect();
+			ps = connection.getConnection().prepareStatement("SELECT * FROM "+nTabla);
+			tabla = getData(ps, nTabla);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			// Cierro la conexión
-			this.connection.disconnect();
+			connection.disconnect();
 		}
-		return getData(ps, nTabla);
+		return tabla;
 	}
 
 	/**
@@ -181,7 +182,11 @@ public class DatabaseManager {
 		return getData(ps, nTabla);
 	}
 
-	public void addEntradas(ArrayList<Elemento> elementos) {
+	/**
+	 * Metodo para añadir datos a la BBDD
+	 * @param elementos
+	 */
+	public void addRegistros(ArrayList<Elemento> elementos) {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		try {
@@ -248,7 +253,7 @@ public class DatabaseManager {
 	 * @param condicion
 	 * @return
 	 */
-	public void updateEntradas(String nTabla, String campo, String valor, String campoBusqueda, String condicion){
+	public void updateRegistros(String nTabla, String campo, String valor, String campoBusqueda, String condicion){
 		Connection connection;
 		PreparedStatement ps = null;
 		try {
@@ -266,16 +271,18 @@ public class DatabaseManager {
 	/**
 	 * Elimina entradas de una tabla por
 	 * una condición indicada.
-	 * @param nTabla
-	 * @param campo
-	 * @param condicion
+	 * @param nTabla 	Nombre de la tabla donde buscar
+	 * @param campo		Nombre del campo de la tabla
+	 * @param condicion	Condición para eliminar la entrada
 	 */
-	public void deleteEntradas(String nTabla, String campo, String condicion){
-		Connection connection;
+	public void deleteRegistros(String nTabla, String campo, String condicion){
 		PreparedStatement ps = null;
 		try {
-			connection = DriverManager.getConnection(this.connection.getConnectionString());
-			ps = connection.prepareStatement("DELETE FROM "+nTabla+" WHERE "+campo+" = '"+condicion+"'");
+			connection.connect();
+			ps = connection.getConnection().prepareStatement("DELETE FROM ? WHERE ? = ?");
+			ps.setString(1, nTabla);
+			ps.setString(2, campo);
+			ps.setString(3, condicion);
 			ps.execute();
 		} catch (SQLException e) {			
 			e.printStackTrace();
@@ -285,7 +292,12 @@ public class DatabaseManager {
 		}
 	}
 
-	public Document exportarTabla(ArrayList<Elemento> elementos, String rutaArchivo) {
+	/**
+	 * Método para exportar una lista de elementos.
+	 * @param elementos		Todos los elementos a exportar.
+	 * @param rutaArchivo	Ruta donde se va a generar el xml.
+	 */
+	public void exportarDatos(ArrayList<Elemento> elementos, String rutaArchivo) {
 		Document documento = null;
 		try {
 			// Creo el documento
@@ -296,8 +308,9 @@ public class DatabaseManager {
 			// Añado una raiz al documento
 			Element raiz = documento.createElement("elementos");
 			documento.appendChild(raiz);
+			
+			// Para cada elemento genero sus atributos según su tipo.
 			Element elem = null;
-
 			for (Elemento elemento : elementos) {
 				if (elemento instanceof Manga) {
 					Manga e = ((Manga)elemento);
@@ -327,6 +340,7 @@ public class DatabaseManager {
 					elem.setAttribute(Editorial.FECHA_FUNDACION, e.getFechaFundacion().toString());
 					elem.setAttribute(Editorial.DIRECCION, e.getDireccion());
 				}
+				// Cada elemento lo añado a la raiz.
 				raiz.appendChild(elem);
 			}
 			// Guardo el documento en un archivo
@@ -339,9 +353,13 @@ public class DatabaseManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return documento;
 	}
 
+	/**
+	 * Método para importar un archivo xml a un ArrayList.
+	 * @param rutaArchivo Ruta del archivo xml.
+	 * @return ArrayList de los objetos de xml.
+	 */
 	public ArrayList<Elemento> importarXml(String rutaArchivo) {
 		ArrayList<Elemento> tabla = new ArrayList<Elemento>();
 		try {
@@ -350,7 +368,8 @@ public class DatabaseManager {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document documento = db.parse(new File(rutaArchivo));
 
-			// Guardo todas las etiquetas con el nombre elemento
+			// Añado todas las etiquetas a tabla con el nombre del elemento.
+			// Primero las que tienen como nombre de la etiqueta manga.
 			NodeList nodeList = documento.getElementsByTagName("manga");
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				NamedNodeMap item = nodeList.item(i).getAttributes();
@@ -364,6 +383,7 @@ public class DatabaseManager {
 						Integer.valueOf(item.getNamedItem(Manga.ID_AUTOR).getNodeValue())
 						));
 			}
+			// Luego las que tienen de nombre autor.
 			nodeList = documento.getElementsByTagName("autor");
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				NamedNodeMap item = nodeList.item(i).getAttributes();
@@ -376,6 +396,7 @@ public class DatabaseManager {
 						fechaDefuncion.equals("")? null: LocalDate.parse(fechaDefuncion)
 						));
 			}
+			// Y por último editorial.
 			nodeList = documento.getElementsByTagName("editorial");
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				NamedNodeMap item = nodeList.item(i).getAttributes();
@@ -393,26 +414,33 @@ public class DatabaseManager {
 		return tabla;
 	}
 
+	/**
+	 * Método para comprobar la integridad de la BBDD,
+	 * esto lo hago comprobando que las ids de autor y editorial
+	 * de manga estén en las tablas de autor y editorial.
+	 * @return true si la BBDD está completamente bien.
+	 */
 	public boolean comprobarIntegridad() {
 		HashSet<Integer> idsAutorEnManga = new HashSet<Integer>();
 		HashSet<Integer> idsEditorialEnManga = new HashSet<Integer>();
 		HashSet<Integer> idsDeAutor = new HashSet<Integer>();
 		HashSet<Integer> idsDeEditorial = new HashSet<Integer>();
-
+		// Recogo todas las ids de autor y editorial en manga
 		for (Elemento manga : getTabla(DatabaseManager.MANGA)) {
 			Manga m = (Manga)manga;
 			idsAutorEnManga.add(m.getIdAutor());
 			idsEditorialEnManga.add(m.getIdEditorial());
 		}
-
+		// Recogo las ids de todos los autores
 		for (Elemento autor : getTabla(DatabaseManager.AUTOR)) {
 			idsDeAutor.add(((Autor)autor).getId());
 		}
-
+		// Recogo las ids de todas las editoriales
 		for (Elemento editorial : getTabla(DatabaseManager.EDITORIAL)) {
 			idsDeAutor.add(((Editorial)editorial).getId());
 		}
-
+		// Compruebo si todas las ids de autor en la tabla manga se 
+		// encuentran en la tabla autor, luego lo mismo con editoriales
 		return idsDeAutor.containsAll(idsAutorEnManga) && idsDeEditorial.containsAll(idsEditorialEnManga);
 	}
 }
