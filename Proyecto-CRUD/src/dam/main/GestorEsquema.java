@@ -45,6 +45,8 @@ public class GestorEsquema {
 				// Añado un salto de línea al final de cada línea.
 				script.append(linea).append("\n");
 			}
+			// Cierro el flujo de datos del BufferedReader.
+			br.close();
 			// Ejecuto el Script
 			statement.executeUpdate(script.toString());
 		} catch (Exception e) {
