@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -359,5 +360,28 @@ public class DatabaseManager {
 			e.printStackTrace();
 		}
 		return tabla;
+	}
+	
+	public boolean comprobarIntegridad() {
+		HashSet<Integer> idsAutorEnManga = new HashSet<Integer>();
+		HashSet<Integer> idsEditorialEnManga = new HashSet<Integer>();
+		HashSet<Integer> idsDeAutor = new HashSet<Integer>();
+		HashSet<Integer> idsDeEditorial = new HashSet<Integer>();
+		
+		for (Elemento manga : getTabla(DatabaseManager.MANGA)) {
+			Manga m = (Manga)manga;
+			idsAutorEnManga.add(m.getIdAutor());
+			idsEditorialEnManga.add(m.getIdEditorial());
+		}
+		
+		for (Elemento autor : getTabla(DatabaseManager.AUTOR)) {
+			idsDeAutor.add(((Autor)autor).getId());
+		}
+
+		for (Elemento editorial : getTabla(DatabaseManager.EDITORIAL)) {
+			idsDeAutor.add(((Editorial)editorial).getId());
+		}
+		
+		return idsDeAutor.containsAll(idsAutorEnManga) && idsDeEditorial.containsAll(idsEditorialEnManga);
 	}
 }
