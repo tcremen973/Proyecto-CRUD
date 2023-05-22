@@ -11,7 +11,7 @@ import java.sql.Statement;
  * utilizando un script almacenado en un archivo.
  * Utiliza una conexión a la BBDD proporcionada
  * a través de un objeto DatabaseConnection.
- * @author usuario
+ * @author Toni
  * @version 1.0
  */
 public class GestorEsquema {
