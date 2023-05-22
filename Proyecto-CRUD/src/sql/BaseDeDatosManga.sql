@@ -29,8 +29,8 @@ CREATE TABLE manga (
   fecha_publicacion DATE,
   id_autor INT,
   id_editorial INT,
-  FOREIGN KEY (id_autor) REFERENCES autor(id),
-  FOREIGN KEY (id_editorial) REFERENCES editorial(id)
+  FOREIGN KEY (id_autor) REFERENCES autor(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (id_editorial) REFERENCES editorial(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Insertar datos en las tablas
