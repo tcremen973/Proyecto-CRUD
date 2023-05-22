@@ -6,11 +6,19 @@ import java.sql.SQLException;
 
 import org.eclipse.jdt.annotation.NonNull;
 
+/**
+ * Gestor de la conexión para la BBDD de manga.
+ * @author Toni
+ * @version 1.0
+ */
 public class DatabaseConnection {
 	private Connection connection;
 	private String connectionString;
-	// CONEXION = "jdbc:mysql://localhost/crud?user=root&password="
-	
+
+	/**
+	 * Constructor de la clase DataBaseConnection.
+	 * @param stringConnection	Dirección de conexión a la BBDD.
+	 */
 	public DatabaseConnection (@NonNull String stringConnection) {
 		try {
 			// Se carga el driver al crear el objeto
@@ -20,28 +28,25 @@ public class DatabaseConnection {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Método para establecer conexión con la BBDD.
+	 * @return true si la conexión se ha establecido.
+	 */
 	public boolean connect() {
 		try {
+			// Creo la conexión con el Driver
 			this.connection = DriverManager.getConnection(connectionString);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return isConnected();
 	}
-	
-	public String getConnectionString() {
-		return connectionString;
-	}
 
-	public void setConnectionString(String connectionString) {
-		this.connectionString = connectionString;
-	}
-
-	public void setConnection(Connection connection) {
-		this.connection = connection;
-	}
-
+	/**
+	 * Método para cerrar la conexión con la BBDD.
+	 * @return true si la conexión está cerrada.
+	 */
 	public boolean disconnect() {
 		try {
 			if(this.connection==null) return true;
@@ -52,11 +57,11 @@ public class DatabaseConnection {
 			return false;
 		}
 	}
-	
-	public Connection getConnection() {
-		return this.connection;
-	}
-	
+
+	/**
+	 * Método para saber si el objeto está conectado a una BBDD.
+	 * @return true si está conectado a una BBDD.
+	 */
 	public boolean isConnected() {
 		try {
 			return !this.connection.isClosed();
@@ -64,5 +69,23 @@ public class DatabaseConnection {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	// Setters y getters
+	
+	public String getConnectionString() {
+		return connectionString;
+	}
+
+	public void setConnectionString(String connectionString) {
+		this.connectionString = connectionString;
+	}
+
+	public Connection getConnection() {
+		return this.connection;
+	}
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
 	}
 }
