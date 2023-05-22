@@ -1,8 +1,10 @@
 package dam.main;
 
-import java.sql.ResultSet;
-import java.util.ArrayList;
-
+/**
+ * Interfaz para reconocer cada elemento de la BBDD como 
+ * el mismo tipo y poder trabajar de una manera generalizada.
+ * @author Toni
+ * @version 1.0
+ */
 public interface Elemento {
-	static ArrayList<Elemento> getData(ResultSet rs) {return null;}
 }
