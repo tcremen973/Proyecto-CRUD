@@ -1,9 +1,7 @@
 package dam.main;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import org.eclipse.jdt.annotation.NonNull;
 
 public class Editorial implements Elemento {
 	private int id;
@@ -11,12 +9,13 @@ public class Editorial implements Elemento {
 	private String pais;
 	private LocalDate fechaFundacion;
 	private String direccion;
-	
+
 	// Atributos Editorial
-		public static String ID = "id", NOMBRE = "nombre", PAIS = "pais",
-				FECHA_FUNDACION = "fecha_fundacion",DIRECCION = "direccion";
-	
-	public Editorial(int id, String nombre, String pais, LocalDate fechaFundacion, String direccion) {
+	public static String ID = "id", NOMBRE = "nombre", PAIS = "pais",
+			FECHA_FUNDACION = "fecha_fundacion",DIRECCION = "direccion";
+
+	public Editorial(@NonNull int id,@NonNull String nombre,@NonNull String pais,
+			@NonNull LocalDate fechaFundacion,@NonNull String direccion) {
 		super();
 		this.id = id;
 		this.nombre = nombre;

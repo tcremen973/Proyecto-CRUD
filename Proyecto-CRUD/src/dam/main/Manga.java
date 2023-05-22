@@ -1,9 +1,7 @@
 package dam.main;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import org.eclipse.jdt.annotation.NonNull;
 
 public class Manga implements Elemento{
 	private int id;
@@ -13,14 +11,14 @@ public class Manga implements Elemento{
 	private LocalDate fechaPublicacion;
 	private int idAutor;
 	private int idEditorial;
-	
+
 	// Atributos Manga
 	public static String ID = "id", TITULO = "titulo", GENERO = "genero", 
 			SINOPSIS = "sinopsis", FECHA_PUBLICACION = "fecha_publicacion",
 			ID_AUTOR = "id_autor", ID_EDITORIAL = "id_editorial";
-	
-	public Manga(int id, String titulo, String genero, String sinopsis, 
-					LocalDate fechaPublicacion, int idAutor, int idEditorial) {
+
+	public Manga(@NonNull int id,@NonNull String titulo,@NonNull String genero,@NonNull String sinopsis, 
+			@NonNull LocalDate fechaPublicacion,@NonNull int idAutor,@NonNull int idEditorial) {
 		this.id = id;
 		this.titulo = titulo;
 		this.genero = genero;
