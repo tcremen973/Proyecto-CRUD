@@ -3,6 +3,12 @@ package dam.main;
 import java.time.LocalDate;
 import org.eclipse.jdt.annotation.NonNull;
 
+/**
+ * La clase Manga representa el objeto manga 
+ * en la base de datos relacional llamada manga.
+ * @author Toni
+ * @version 1.0
+ */
 public class Manga implements Elemento{
 	private int id;
 	private String titulo;
@@ -12,11 +18,22 @@ public class Manga implements Elemento{
 	private int idAutor;
 	private int idEditorial;
 
-	// Atributos Manga
-	public static String ID = "id", TITULO = "titulo", GENERO = "genero", 
-			SINOPSIS = "sinopsis", FECHA_PUBLICACION = "fecha_publicacion",
-			ID_AUTOR = "id_autor", ID_EDITORIAL = "id_editorial";
+	// Atributos Manga BBDD
+	public static String
+	ID = "id", TITULO = "titulo", GENERO = "genero", 
+	SINOPSIS = "sinopsis", FECHA_PUBLICACION = "fecha_publicacion",
+	ID_AUTOR = "id_autor", ID_EDITORIAL = "id_editorial";
 
+	/**
+	 * Constructor de la clase Manga.
+	 * @param id				El ID del manga.
+	 * @param titulo           	El título del manga.
+	 * @param genero           	El género del manga.
+	 * @param sinopsis         	La sinopsis del manga.
+	 * @param fechaPublicacion 	La fecha de publicación del manga.
+	 * @param idAutor          	El ID del autor asociado al manga.
+	 * @param idEditorial      	El ID de la editorial asociada al manga.
+	 */
 	public Manga(@NonNull int id,@NonNull String titulo,@NonNull String genero,@NonNull String sinopsis, 
 			@NonNull LocalDate fechaPublicacion,@NonNull int idAutor,@NonNull int idEditorial) {
 		this.id = id;
@@ -27,6 +44,8 @@ public class Manga implements Elemento{
 		this.idAutor = idAutor;
 		this.idEditorial = idEditorial;
 	}
+
+	// Getters y setters
 
 	public int getId() {
 		return id;
@@ -84,6 +103,8 @@ public class Manga implements Elemento{
 		this.idEditorial = idEditorial;
 	}
 
+	// Método toString
+	
 	@Override
 	public String toString() {
 		return "Manga [id=" + id + ", titulo=" + titulo + ", genero=" + genero + ", sinopsis=" + sinopsis
