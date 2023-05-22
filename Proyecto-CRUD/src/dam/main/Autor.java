@@ -16,7 +16,6 @@ public class Autor implements Elemento {
 
 	public Autor(@NonNull int id,@NonNull String nombre,@NonNull String pais,
 			@NonNull LocalDate fechaNacimiento, LocalDate fechaDefuncion) {
-		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.pais = pais;

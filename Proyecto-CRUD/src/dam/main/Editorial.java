@@ -16,7 +16,6 @@ public class Editorial implements Elemento {
 
 	public Editorial(@NonNull int id,@NonNull String nombre,@NonNull String pais,
 			@NonNull LocalDate fechaFundacion,@NonNull String direccion) {
-		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.pais = pais;
