@@ -51,6 +51,9 @@ public class GestorEsquema {
 			statement.executeUpdate(script.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			// Cierro la conexión a la BBDD
+			connection.disconnect();
 		}
 	}
 }
