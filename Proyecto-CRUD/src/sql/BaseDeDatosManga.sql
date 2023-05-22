@@ -47,7 +47,7 @@ INSERT INTO manga (id, titulo, genero, sinopsis, fecha_publicacion, id_autor, id
   (1, 'Dragon Ball', 'Acción, Aventura, Comedia', 'Un joven aventurero llamado Goku busca las siete esferas del dragón para poder pedir un deseo.', '1984-11-20', 1, 1),
   (2, 'One Piece', 'Acción, Aventura, Comedia', 'Un joven pirata llamado Monkey D. Luffy busca el tesoro más grande del mundo, conocido como "One Piece".', '1997-07-22', 2, 2),
   (3, 'Kimetsu no Yaiba', 'Acción, Aventura, Fantasía', 'Un joven llamado Tanjiro se convierte en un cazador de demonios para vengar a su familia y encontrar una cura para su hermana.', '2016-02-15', 3, 1),
-  (4, 'Naruto', 'Acción, Aventura, Comedia', 'Un joven ninja llamado Naruto busca convertirse en el Hokage de su aldea y ser reconocido como un héroe.', '1999-09-21', NULL, 2),
-  (5, 'Death Note', 'Misterio, Sobrenatural, Thriller psicológico', 'Un joven estudiante llamado Light Yagami encuentra un cuaderno mágico que le permite matar a cualquier persona cuyo nombre escriba en él.', '2003-12-01', NULL, 1),
-  (6, 'Attack on Titan', 'Acción, Drama, Horror', 'La humanidad vive dentro de tres muros gigantes para protegerse de los titanes, gigantes humanoides que devoran a los humanos.', '2009-09-09', NULL, 2),
-  (7, 'Jujutsu Kaisen', 'Acción, Aventura, Fantasía', 'Un joven llamado Yuji Itadori se convierte en un cazador de demonios para proteger a la humanidad de las criaturas malditas.', '2018-03-05', NULL, 1);
+  (4, 'Naruto', 'Acción, Aventura, Comedia', 'Un joven ninja llamado Naruto busca convertirse en el Hokage de su aldea y ser reconocido como un héroe.', '1999-09-21', 1, 2),
+  (5, 'Death Note', 'Misterio, Sobrenatural, Thriller psicológico', 'Un joven estudiante llamado Light Yagami encuentra un cuaderno mágico que le permite matar a cualquier persona cuyo nombre escriba en él.', '2003-12-01', 1, 1),
+  (6, 'Attack on Titan', 'Acción, Drama, Horror', 'La humanidad vive dentro de tres muros gigantes para protegerse de los titanes, gigantes humanoides que devoran a los humanos.', '2009-09-09', 2, 2),
+  (7, 'Jujutsu Kaisen', 'Acción, Aventura, Fantasía', 'Un joven llamado Yuji Itadori se convierte en un cazador de demonios para proteger a la humanidad de las criaturas malditas.', '2018-03-05', 2, 1);
