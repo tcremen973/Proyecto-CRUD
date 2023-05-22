@@ -188,19 +188,19 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * Edita un campo de una tabla.
-	 * @param campo
-	 * @param valor
-	 * @param campoBusqueda
-	 * @param condicion
-	 * @return
+	 * Método para actualizar registros de la BBDD.
+	 * @param nTabla		Nombre de la tabla.
+	 * @param campo			Campo a cambiar.
+	 * @param valor			Valor a sobrescribir.
+	 * @param campoBusqueda	Campo por el que se va a buscar.
+	 * @param condicion		Condicion de búsqueda.
 	 */
 	public void updateRegistros(String nTabla, String campo, String valor, String campoBusqueda, String condicion){
 		Connection connection;
 		PreparedStatement ps = null;
 		try {
 			connection = DriverManager.getConnection(this.connection.getConnectionString());
-			ps = connection.prepareStatement("UPDATE "+nTabla+" SET "+campo+" = '"+valor+"' WHERE "+campoBusqueda+" = "+condicion);
+			ps = connection.prepareStatement("UPDATE "+nTabla+" SET "+campo+" = '"+valor+"' WHERE "+campoBusqueda+" = '"+condicion+"'");
 			ps.execute();
 		} catch (SQLException e) {			
 			e.printStackTrace();
@@ -211,20 +211,16 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * Elimina entradas de una tabla por
-	 * una condición indicada.
-	 * @param nTabla 	Nombre de la tabla donde buscar
-	 * @param campo		Nombre del campo de la tabla
-	 * @param condicion	Condición para eliminar la entrada
+	 * Elimina entradas de una tabla por una condición indicada.
+	 * @param nTabla 	Nombre de la tabla donde buscar.
+	 * @param campo		Nombre del campo de la tabla.
+	 * @param condicion	Condición para eliminar la entrada.
 	 */
 	public void deleteRegistros(String nTabla, String campo, String condicion){
 		PreparedStatement ps = null;
 		try {
 			connection.connect();
-			ps = connection.getConnection().prepareStatement("DELETE FROM ? WHERE ? = ?");
-			ps.setString(1, nTabla);
-			ps.setString(2, campo);
-			ps.setString(3, condicion);
+			ps = connection.getConnection().prepareStatement("DELETE FROM "+nTabla+" WHERE "+campo+" = '"+condicion+"'");
 			ps.execute();
 		} catch (SQLException e) {			
 			e.printStackTrace();
