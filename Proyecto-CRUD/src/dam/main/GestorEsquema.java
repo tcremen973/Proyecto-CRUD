@@ -32,9 +32,9 @@ public class GestorEsquema {
 	public void crearBaseDatos(String rutaScript) {
 		try {
 			// Creo una conexión a la BBDD
-			Connection connection = DriverManager.getConnection(this.connection.getConnectionString());
+			connection.connect();
 			// Creo un objeto Statement para luego ejecutar el script.
-			Statement statement = connection.createStatement();
+			Statement statement = connection.getConnection().createStatement();
 			// Un objeto BufferedReader leerá el archivo que le hemos pasado por parámetro.
 			BufferedReader br = new BufferedReader(new FileReader(rutaScript));
 			// Creo un objeto StringBuilder para guardar el script.
