@@ -49,19 +49,42 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * Metodo para ejecutar la linea de SQL recibida.
-	 * @param nTabla Nombre de la tabla, usado para identificar el tipo de objetos.
-	 * @return
+	 * Método para hacer una consulta Select a la BBDD.
+	 * @param nTabla		Nombre de la tabla
+	 * @param ordenarPor	Campor por el que ordenar.
+	 * @param orden			Orden (Ascendente o Descendente)
+	 * @param condiciones	Array de strings con las condiciones, 
+	 * 						donde los valores pares son los campos y 
+	 * 						los valores impares son las condiciones
+	 * @return ArrayList con todos los objetos obtenidos de los registros.
 	 */
-	private ArrayList<Elemento> getData(PreparedStatement ps, String nTabla){
-		ArrayList<Elemento> data = new ArrayList<Elemento>();
+	public ArrayList<Elemento> getTabla(@NonNull String nTabla, String ordenarPor, String orden, String[] condiciones){
+		PreparedStatement ps = null;
+		ArrayList<Elemento> tabla = new ArrayList<Elemento>();
 		try {
+			// Abro conexión
+			connection.connect();
+			// Construyo un String para luego usarlo en un PreparedStatement
+			StringBuilder query = new StringBuilder("SELECT * FROM "+nTabla+" ");
+			if (condiciones != null) {
+				query.append("WHERE "+condiciones[0]+" = "+condiciones[1]+" ");
+				for (int i = 3; i <= condiciones.length-1; i+=2) {
+					query.append("AND "+condiciones[i-1]+" = '"+condiciones[i]+"' ");
+				}
+			}
+			if (ordenarPor != null && orden != null) {
+				query.append("ORDER BY "+ordenarPor+" "+orden);
+			}
+			// Establezco el PreparedStatement
+			ps = connection.getConnection().prepareStatement(query.toString());
+			
+			// Ejecuto el PreparedStatement
 			ResultSet rs = ps.executeQuery();
-			// Creo los objetos de la consulta según su tipo
+			// Introduzco los datos en el ArrayList
 			switch (nTabla) {
 			case "manga": // Caso para Manga
 				while(rs.next()) {
-					data.add(new Manga(
+					tabla.add(new Manga(
 							rs.getInt(1),
 							rs.getString(2),
 							rs.getString(3),
@@ -73,7 +96,7 @@ public class DatabaseManager {
 				break;
 			case "autor": // Caso para Autor
 				while(rs.next()) {
-					data.add(new Autor(
+					tabla.add(new Autor(
 							rs.getInt(1),
 							rs.getString(2),
 							rs.getString(3),
@@ -83,7 +106,7 @@ public class DatabaseManager {
 				break;
 			case "editorial": // Caso para Editorial
 				while(rs.next()) {
-					data.add(new Editorial(
+					tabla.add(new Editorial(
 							rs.getInt(1),
 							rs.getString(2),
 							rs.getString(3),
@@ -92,94 +115,13 @@ public class DatabaseManager {
 				}; 
 				break;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return data;
-	}
-	
-	/**
-	 * Método para devolver una tabla completa sin condiciones
-	 * @param nTabla
-	 * @return
-	 */
-	public ArrayList<Elemento> getTabla(String nTabla){
-		PreparedStatement ps = null;
-		ArrayList<Elemento> tabla = null;
-		try {
-			// Abro la conexión
-			connection.connect();
-			ps = connection.getConnection().prepareStatement("SELECT * FROM "+nTabla);
-			tabla = getData(ps, nTabla);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			// Cierro la conexión
 			connection.disconnect();
 		}
 		return tabla;
-	}
-
-	/**
-	 * Método para devolver una tabla por una condición
-	 * @param nTabla
-	 * @param campo
-	 * @param condicion
-	 * @return
-	 */
-	public ArrayList<Elemento> getTabla(String nTabla, String campo, String condicion){
-		Connection connection;
-		PreparedStatement ps = null;
-		try {
-			connection = DriverManager.getConnection(this.connection.getConnectionString());
-			ps = connection.prepareStatement("SELECT * FROM manga WHERE "+ campo +" = "+ condicion);
-		} catch (SQLException e) {			
-			e.printStackTrace();
-		} finally {
-			// Cierro la conexión
-			this.connection.disconnect();
-		}
-		return getData(ps, nTabla);
-	}
-
-	/**
-	 * Método para devolver una tabla por dos condiciones
-	 * @param nTabla
-	 * @param campo1
-	 * @param condicion1
-	 * @param campo2
-	 * @param condicion2
-	 * @return
-	 */
-	public ArrayList<Elemento> getTabla(String nTabla, String campo1, String condicion1, String campo2, String condicion2){
-		Connection connection;
-		PreparedStatement ps = null;
-		try {
-			connection = DriverManager.getConnection(this.connection.getConnectionString());
-			ps = connection.prepareStatement("SELECT * FROM manga "
-					+ "WHERE "+campo1+" = "+condicion1+" AND "+campo2+" = "+condicion2);
-		} catch (SQLException e) {			
-			e.printStackTrace();
-		} finally {
-			// Cierro la conexión
-			this.connection.disconnect();
-		}
-		return getData(ps, nTabla);
-	}
-
-	public ArrayList<Elemento> ordenarTabla(String nTabla, String campo, String orden){
-		Connection connection;
-		PreparedStatement ps = null;
-		try {
-			connection = DriverManager.getConnection(this.connection.getConnectionString());
-			ps = connection.prepareStatement("SELECT * FROM manga ORDER BY "+campo+" "+orden);
-		} catch (SQLException e) {			
-			e.printStackTrace();
-		} finally {
-			// Cierro la conexión
-			this.connection.disconnect();
-		}
-		return getData(ps, nTabla);
 	}
 
 	/**
@@ -426,17 +368,17 @@ public class DatabaseManager {
 		HashSet<Integer> idsDeAutor = new HashSet<Integer>();
 		HashSet<Integer> idsDeEditorial = new HashSet<Integer>();
 		// Recogo todas las ids de autor y editorial en manga
-		for (Elemento manga : getTabla(DatabaseManager.MANGA)) {
+		for (Elemento manga : getTabla(DatabaseManager.MANGA,null,null,null)) {
 			Manga m = (Manga)manga;
 			idsAutorEnManga.add(m.getIdAutor());
 			idsEditorialEnManga.add(m.getIdEditorial());
 		}
 		// Recogo las ids de todos los autores
-		for (Elemento autor : getTabla(DatabaseManager.AUTOR)) {
+		for (Elemento autor : getTabla(DatabaseManager.AUTOR,null,null,null)) {
 			idsDeAutor.add(((Autor)autor).getId());
 		}
 		// Recogo las ids de todas las editoriales
-		for (Elemento editorial : getTabla(DatabaseManager.EDITORIAL)) {
+		for (Elemento editorial : getTabla(DatabaseManager.EDITORIAL,null,null,null)) {
 			idsDeAutor.add(((Editorial)editorial).getId());
 		}
 		// Compruebo si todas las ids de autor en la tabla manga se 
