@@ -31,10 +31,11 @@ import org.w3c.dom.NodeList;
  */
 public class DatabaseManager {
 	private DatabaseConnection connection;
-	// Acceso a tablas
+
+	// Constantes para acceso a tablas
 	public static String MANGA = "manga", AUTOR = "autor", EDITORIAL = "editorial";
 
-	// Ordenar
+	// Constantes para ordenar
 	public static String ASCENDENTE = "ASC", DESCENDENTE = "DESC";
 
 	/**
@@ -51,20 +52,50 @@ public class DatabaseManager {
 	 * @return
 	 */
 	private ArrayList<Elemento> getData(PreparedStatement ps, String nTabla){
-		ArrayList<Elemento> tabla = new ArrayList<Elemento>();
+		ArrayList<Elemento> data = new ArrayList<Elemento>();
 		try {
 			ResultSet rs = ps.executeQuery();
 			// Guardo los datos de la consulta con el tipo que corresponde
 			switch (nTabla) {
-			case "manga": tabla.addAll(Manga.getData(rs)); break;
-			case "autor": tabla.addAll(Autor.getData(rs)); break;
-			case "editorial": tabla.addAll(Editorial.getData(rs)); break;
+
+			case "manga": // Caso para Manga
+				while(rs.next()) {
+					data.add(new Manga(
+							rs.getInt(1),
+							rs.getString(2),
+							rs.getString(3),
+							rs.getString(4),
+							rs.getDate(5).toLocalDate(),
+							rs.getInt(6),
+							rs.getInt(7)));
+				}; 
+				break;
+
+			case "autor": // Caso para Autor
+				while(rs.next()) {
+					data.add(new Autor(
+							rs.getInt(1),
+							rs.getString(2),
+							rs.getString(3),
+							rs.getDate(4).toLocalDate(),
+							rs.getDate(5) == null? null:rs.getDate(5).toLocalDate()));
+				}; 
+				break;
+			case "editorial": // Caso para Editorial
+				while(rs.next()) {
+					data.add(new Editorial(
+							rs.getInt(1),
+							rs.getString(2),
+							rs.getString(3),
+							rs.getDate(4).toLocalDate(),
+							rs.getString(5)));
+				}; 
+				break;
 			}
-			tabla.addAll(Manga.getData(rs));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return tabla;
+		return data;
 	}
 
 	/**
@@ -361,19 +392,19 @@ public class DatabaseManager {
 		}
 		return tabla;
 	}
-	
+
 	public boolean comprobarIntegridad() {
 		HashSet<Integer> idsAutorEnManga = new HashSet<Integer>();
 		HashSet<Integer> idsEditorialEnManga = new HashSet<Integer>();
 		HashSet<Integer> idsDeAutor = new HashSet<Integer>();
 		HashSet<Integer> idsDeEditorial = new HashSet<Integer>();
-		
+
 		for (Elemento manga : getTabla(DatabaseManager.MANGA)) {
 			Manga m = (Manga)manga;
 			idsAutorEnManga.add(m.getIdAutor());
 			idsEditorialEnManga.add(m.getIdEditorial());
 		}
-		
+
 		for (Elemento autor : getTabla(DatabaseManager.AUTOR)) {
 			idsDeAutor.add(((Autor)autor).getId());
 		}
@@ -381,7 +412,7 @@ public class DatabaseManager {
 		for (Elemento editorial : getTabla(DatabaseManager.EDITORIAL)) {
 			idsDeAutor.add(((Editorial)editorial).getId());
 		}
-		
+
 		return idsDeAutor.containsAll(idsAutorEnManga) && idsDeEditorial.containsAll(idsEditorialEnManga);
 	}
 }

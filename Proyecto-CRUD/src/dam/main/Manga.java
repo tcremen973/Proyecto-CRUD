@@ -92,23 +92,4 @@ public class Manga implements Elemento{
 				+ ", fechaPublicacion=" + fechaPublicacion + ", idAutor=" + idAutor + ", idEditorial=" + idEditorial
 				+ "]";
 	}
- 
-	public static ArrayList<Elemento> getData(ResultSet rs) {
-		ArrayList<Elemento> data = new ArrayList<Elemento>();
-		try {
-			while(rs.next()) {
-				data.add(new Manga(
-						rs.getInt(1),
-						rs.getString(2),
-						rs.getString(3),
-						rs.getString(4),
-						rs.getDate(5).toLocalDate(),
-						rs.getInt(6),
-						rs.getInt(7)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return data;
-	}
 }

@@ -70,21 +70,4 @@ public class Autor implements Elemento {
 		return "Autor [id=" + id + ", nombre=" + nombre + ", pais=" + pais + ", fechaNacimiento=" + fechaNacimiento
 				+ ", fechaDefuncion=" + fechaDefuncion + "]";
 	}
-
-	public static ArrayList<Elemento> getData(ResultSet rs) {
-		ArrayList<Elemento> data = new ArrayList<Elemento>();
-		try {
-			while(rs.next()) {
-				data.add(new Autor(
-						rs.getInt(1),
-						rs.getString(2),
-						rs.getString(3),
-						rs.getDate(4).toLocalDate(),
-						rs.getDate(5) == null? null:rs.getDate(5).toLocalDate()));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return data;
-	}
 }

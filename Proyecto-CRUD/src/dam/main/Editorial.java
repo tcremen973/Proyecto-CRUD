@@ -70,21 +70,4 @@ public class Editorial implements Elemento {
 		return "Editorial [id=" + id + ", nombre=" + nombre + ", pais=" + pais + ", fechaFundacion=" + fechaFundacion
 				+ ", direccion=" + direccion + "]";
 	}
-
-	public static ArrayList<Elemento> getData(ResultSet rs) {
-		ArrayList<Elemento> data = new ArrayList<Elemento>();
-		try {
-			while(rs.next()) {
-				data.add(new Editorial(
-						rs.getInt(1),
-						rs.getString(2),
-						rs.getString(3),
-						rs.getDate(4).toLocalDate(),
-						rs.getString(5)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return data;
-	}
 }
